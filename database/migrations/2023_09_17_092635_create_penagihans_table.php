@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('penagihans', function (Blueprint $table) {
             $table->id();
+            $table->string('meteran_terbaru');
+            $table->string('foto_meteran');
             $table->timestamps();
         });
     }

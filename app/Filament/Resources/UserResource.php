@@ -3,26 +3,23 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\User;
 use Filament\Tables;
-use App\Models\Penagihan;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\PenagihanResource\Pages;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use App\Filament\Resources\PenagihanResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers;
 
-class PenagihanResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Penagihan::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -31,9 +28,16 @@ class PenagihanResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-                    TextInput::make('meteran_terbaru')->required(),
-                    FileUpload::make('foto_meteran')->required(),
-                    ])
+                    TextInput::make('name')->required(),
+                    TextInput::make('email')->email()->required(),
+                    TextInput::make('password')
+                    ->label('Password')
+                    ->password()
+                    ->minLength(8)
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->dehydrated(fn ($state) => filled($state)),
+                ])
             ]);
     }
 
@@ -41,8 +45,10 @@ class PenagihanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('meteran_terbaru'),
-                ImageColumn::make('foto_meteran')->width(100)->height(100),
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->sortable()->searchable(),
+                TextColumn::make('email')->sortable(),
+                TextColumn::make('created_at'),
             ])
             ->filters([
                 //
@@ -65,9 +71,9 @@ class PenagihanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPenagihans::route('/'),
-            'create' => Pages\CreatePenagihan::route('/create'),
-            'edit' => Pages\EditPenagihan::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }    
 }

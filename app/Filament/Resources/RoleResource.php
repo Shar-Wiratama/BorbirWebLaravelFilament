@@ -5,38 +5,41 @@ namespace App\Filament\Resources;
 use stdClass;
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Pengumuman;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
+use Spatie\Permission\Models\Role;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\RoleResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\PengumumanResource\Pages;
-use App\Filament\Resources\PengumumanResource\RelationManagers;
+use App\Filament\Resources\RoleResource\RelationManagers;
 
-class PengumumanResource extends Resource
+class RoleResource extends Resource
 {
-    protected static ?string $model = Pengumuman::class;
+    protected static ?string $model = Role::class;
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $navigationIcon = 'heroicon-o-cog';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
-
-    protected static ?string $navigationGroup = 'Pengumuman Management';
+    protected static ?string $navigationGroup = 'User Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Card::make()
-                ->schema([
-                    TextInput::make('title')->required(),
-                    Textarea::make('content')->required(),
+                Card::make()->schema([
+                TextInput::make('name')
+                ->minLength(3)
+                ->maxLength(100)
+                ->required()
+                ->unique(ignoreRecord: true),
+                Select::make('permissions')
+                ->multiple()
+                ->relationship('permissions','name')->preload(),
                 ])
             ]);
     }
@@ -55,8 +58,7 @@ class PengumumanResource extends Resource
                         );
                     }
                 ),
-                TextColumn::make('title'),
-                TextColumn::make('created_at'),
+                TextColumn::make('name')->limit('50')->sortable()->searchable(),
             ])
             ->filters([
                 //
@@ -79,9 +81,9 @@ class PengumumanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPengumumen::route('/'),
-            'create' => Pages\CreatePengumuman::route('/create'),
-            'edit' => Pages\EditPengumuman::route('/{record}/edit'),
+            'index' => Pages\ListRoles::route('/'),
+            'create' => Pages\CreateRole::route('/create'),
+            'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }    
 }

@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePengumuman extends CreateRecord
 {
     protected static string $resource = PengumumanResource::class;
+
+    protected function getRedirectUrl(): string{
+        return $this->getResource()::getUrl('index');
+    }
 }

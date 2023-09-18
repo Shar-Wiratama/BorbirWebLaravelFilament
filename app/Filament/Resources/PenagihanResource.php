@@ -26,6 +26,8 @@ class PenagihanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
+    protected static ?string $navigationGroup = 'Iuran';
+
     public static function form(Form $form): Form
     {
         return $form

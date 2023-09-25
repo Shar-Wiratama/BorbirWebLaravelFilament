@@ -12,9 +12,18 @@ class Penagihan extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
+        'user_id',
+
+        'previous_meter',
         'updated_meter',
         'photo',
         'total_payment',
+
         'status',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

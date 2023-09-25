@@ -30,10 +30,26 @@ class PenagihanResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $form_nama = '';
+        if (auth()->user()) {
+            $form_nama = Forms\Components\Select::make('user_id')
+                ->relationship('user', 'name')->label('Nama Anggota')->default(auth()->user()->id)->disabled()->columnSpan(['sm' => 1]);
+        } else {
+            $form_nama = Forms\Components\Select::make('user_id')
+                ->relationship('user', 'name')->label('Nama Anggota')->columnSpan(['sm' => 1])
+                ->reactive()->searchable()
+                ->afterStateUpdated(
+                    function (callable $set, callable $get) {
+                        $myuser = User::find($get('user_id'));
+                    }
+                );
+        }
+
         return $form
             ->schema([
                 Card::make()
                 ->schema([
+                    $form_nama,
                     TextInput::make('updated_meter')->required(),
                     FileUpload::make('photo')->required(),
                 ])
@@ -44,6 +60,8 @@ class PenagihanResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('user.name')->wrap()->sortable()->searchable(),
+                TextColumn::make('user.address')->sortable()->searchable()->label('Alamat'),
                 TextColumn::make('updated_meter'),
                 ImageColumn::make('photo')->width(100)->height(100),
                 TextColumn::make('created_at'),

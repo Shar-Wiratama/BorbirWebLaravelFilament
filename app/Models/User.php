@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Penagihan;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -22,6 +23,10 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        // 'role',
+        'address',
+        'initial_meter',
+        // 'deposit'
         'password',
     ];
 
@@ -47,5 +52,10 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessFilament(): bool
     {
         return $this->hasRole(['admin','anggota']);
+    }
+
+    public function Penagihan()
+    {
+        return this->hasMany(Penagihan::class);
     }
 }

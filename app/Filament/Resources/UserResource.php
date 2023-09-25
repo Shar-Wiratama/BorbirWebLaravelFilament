@@ -26,18 +26,29 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationGroup = 'User Management';
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 Card::make()->schema([
                     TextInput::make('name')
                     ->required(),
+
+                    TextInput::make('address')
+                    ->required(),
+
+                    TextInput::make('initial_meter')
+                    ->required(),
+                    
                     TextInput::make('email')
                     ->email()
                     ->required(),
+                    
                     TextInput::make('password')
                     ->label('Password')
                     ->password()
@@ -49,9 +60,6 @@ class UserResource extends Resource
                     Select::make('roles')
                     ->multiple()
                     ->relationship('roles','name')->preload(),
-                    Select::make('permissions')
-                    ->multiple()
-                    ->relationship('permissions','name')->preload(),
                 ])
             ]);
     }
@@ -70,8 +78,10 @@ class UserResource extends Resource
                         );
                     }
                 ),
-                TextColumn::make('name'),
+                TextColumn::make('name')->sortable()->searchable(),
+                TextColumn::make('address')->sortable()->searchable(),
                 TextColumn::make('email'),
+                TextColumn::make('roles.name')->sortable()->searchable(),
                 TextColumn::make('created_at'),
             ])
             ->filters([

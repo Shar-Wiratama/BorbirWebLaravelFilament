@@ -10,6 +10,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Card;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -62,6 +63,8 @@ class PengumumanResource extends Resource
                 //
             ])
             ->actions([
+                // Action::make('show')
+                // ->url(fn(Pengumuman $record)=>'pengumumens/show/'.$record->id), 
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -82,6 +85,11 @@ class PengumumanResource extends Resource
             'index' => Pages\ListPengumumen::route('/'),
             'create' => Pages\CreatePengumuman::route('/create'),
             'edit' => Pages\EditPengumuman::route('/{record}/edit'),
+            // 'show' =>Pages\ShowPengumuman::route('/show/{id}'),
         ];
-    }    
+    } 
+    public static function viewAny(): bool
+    {
+        return $user->hasRole('admin');
+    }   
 }

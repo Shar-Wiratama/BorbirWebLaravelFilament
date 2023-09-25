@@ -14,8 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('penagihans', function (Blueprint $table) {
+            //constraint to user id
             $table->id();
+            $table->foreignId('user_id')->constrained();
+
             $table->integer('updated_meter');
+            $table->integer('difference_meter');
             $table->string('photo');
             $table->integer('total_payment');
             $table->enum('status',['Diterima','Ditolak']);
